@@ -5,7 +5,7 @@ Android app that contains score, grade, and VOLFORCE calculators for Sound Volte
 Based on the web versions of the [Score](https://github.com/brenbread/SDVX-Score-Calculator), [Grade](https://github.com/brenbread/SDVX-Grade-Calculator),
 and [VOLFORCE](https://github.com/brenbread/SDVX-VOLFORCE-Calculator) calculators.  
 
-[v1 .apk download](https://github.com/brenbread/SDVX_Calculator_Suite_Android/raw/master/sdvx-calculator-suite-v1.1.apk)  
+[v1.1 .apk download](https://github.com/brenbread/SDVX_Calculator_Suite_Android/raw/master/sdvx-calculator-suite-v1.1.apk)  
 	
 
 ## TODO
