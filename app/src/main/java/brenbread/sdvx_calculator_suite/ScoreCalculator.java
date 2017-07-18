@@ -2,20 +2,16 @@ package brenbread.sdvx_calculator_suite;
 
 import android.app.Fragment;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import java.math.BigDecimal;
-
-/**
- * Created by Bren Bread on 7/16/2017.
- */
-
 
 
 public class ScoreCalculator extends Fragment implements View.OnClickListener {
@@ -51,17 +47,42 @@ public class ScoreCalculator extends Fragment implements View.OnClickListener {
 
         calcButton.setOnClickListener(ScoreCalculator.this);
         resetButton.setOnClickListener(ScoreCalculator.this);
+
+        //using ENTER KEY instead of "Calculate" Button
+        errorInput.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+                if((keyEvent != null && (keyEvent.getKeyCode() == KeyEvent.KEYCODE_ENTER)) || (i == EditorInfo.IME_ACTION_DONE)) {
+                    String critIn = inputToString(criticalInput); //user input
+                    String nearIn = inputToString(nearInput);
+                    String errorIn = inputToString(errorInput);
+
+                    if (critIn.equals("") || nearIn.equals("") || errorIn.equals("")) {
+                        scoreOut.setText("Input each field");
+                        gradeOut.setText("");
+                        critValOut.setText("");
+                        nearValOut.setText("");
+                        noteValOut.setText("");
+                    } else {
+                        scoreCalc(critIn, nearIn, errorIn);
+                    }
+                }
+                return false;
+            }
+        });
+
         return view;
     }
+
+
 
     @Override
     public void onClick(View v) {
         switch(v.getId()) {
             case R.id.calcButton:
-                String critIn = criticalInput.getText().toString(); //user input
-                String nearIn = nearInput.getText().toString();
-                String errorIn = errorInput.getText().toString();
-                String grade = "";
+                String critIn = inputToString(criticalInput); //user input
+                String nearIn = inputToString(nearInput);
+                String errorIn = inputToString(errorInput);
 
                 if (critIn.equals("") || nearIn.equals("") || errorIn.equals("")) //checks if input is empty
                 {
@@ -72,51 +93,7 @@ public class ScoreCalculator extends Fragment implements View.OnClickListener {
                     noteValOut.setText("");
                 } else
                 { //there is input in all fields
-                    int critFinal = Integer.parseInt(critIn); //parse string to int
-                    int nearFinal = Integer.parseInt(nearIn);
-                    int errorFinal = Integer.parseInt(errorIn);
-
-                    int totalNotes = critFinal + nearFinal + errorFinal;
-                    BigDecimal critValB = new BigDecimal(10000000);
-                    BigDecimal critVal = critValB.divide(new BigDecimal(totalNotes),20,BigDecimal.ROUND_HALF_UP);
-                    BigDecimal nearVal = critVal.divide(new BigDecimal(2),20,BigDecimal.ROUND_HALF_UP); //crit/2
-                    BigDecimal totalScoreA = critVal.multiply(new BigDecimal(critFinal));
-                    BigDecimal totalScoreB = nearVal.multiply(new BigDecimal(nearFinal));
-                    BigDecimal totalScoreAdded = totalScoreA.add(totalScoreB);
-
-                    int totalScore = totalScoreAdded.intValue();
-
-                    //score calculation
-                    if (critFinal != 0 && nearFinal == 0 && errorFinal == 0) {
-                        totalScore = 10000000;
-                        String scoreFinal = Integer.toString(totalScore);
-                        scoreOut.setText(scoreFinal);
-                    } else if (critFinal == 0 && nearFinal == 0 && errorFinal == 0) {
-                        totalScore = 0;
-                        String scoreFinal = Integer.toString(totalScore);
-                        scoreOut.setText(scoreFinal);
-                    } else {
-                        String scoreFinal = Integer.toString(totalScore);
-                        scoreOut.setText(scoreFinal);
-                    }
-
-                    grade = gradeCalc(totalScore); //gets grade calc
-
-                    //convert double to then int to string
-                    int critINT = critVal.intValue();
-                    int nearINT = nearVal.intValue();
-
-
-                    String critValFinal = Integer.toString(critINT);
-                    String nearValFinal = Integer.toString(nearINT);
-                    String totalNotesFinal = Integer.toString(totalNotes);
-
-                    //app output
-                    critValOut.setText(critValFinal);
-                    nearValOut.setText(nearValFinal);
-                    noteValOut.setText(totalNotesFinal);
-                    gradeOut.setText(grade);
-
+                    scoreCalc(critIn, nearIn, errorIn);
                 }
                 break;
 
@@ -133,6 +110,61 @@ public class ScoreCalculator extends Fragment implements View.OnClickListener {
         }
     }
 
+
+    void scoreCalc(String critIn, String nearIn, String errorIn) {
+        String grade;
+        int critFinal = Integer.parseInt(critIn); //parse string to int
+        int nearFinal = Integer.parseInt(nearIn);
+        int errorFinal = Integer.parseInt(errorIn);
+
+        //calculates score
+        int totalNotes = critFinal + nearFinal + errorFinal;
+        BigDecimal critValB = new BigDecimal(10000000);
+        BigDecimal critVal = critValB.divide(new BigDecimal(totalNotes),20,BigDecimal.ROUND_HALF_UP);
+        BigDecimal nearVal = critVal.divide(new BigDecimal(2),20,BigDecimal.ROUND_HALF_UP); //crit/2
+        BigDecimal totalScoreA = critVal.multiply(new BigDecimal(critFinal));
+        BigDecimal totalScoreB = nearVal.multiply(new BigDecimal(nearFinal));
+        BigDecimal totalScoreAdded = totalScoreA.add(totalScoreB);
+
+        int totalScore = totalScoreAdded.intValue();
+
+        //score calculation
+        if (critFinal != 0 && nearFinal == 0 && errorFinal == 0) {
+            totalScore = 10000000;
+            String scoreFinal = Integer.toString(totalScore);
+            scoreOut.setText(scoreFinal);
+        } else if (critFinal == 0 && nearFinal == 0 && errorFinal == 0) {
+            totalScore = 0;
+            String scoreFinal = Integer.toString(totalScore);
+            scoreOut.setText(scoreFinal);
+        } else {
+            String scoreFinal = Integer.toString(totalScore);
+            scoreOut.setText(scoreFinal);
+        }
+
+        grade = gradeCalc(totalScore); //gets grade calc
+
+        //convert double to then int to string
+        int critINT = critVal.intValue();
+        int nearINT = nearVal.intValue();
+
+
+        String critValFinal = Integer.toString(critINT);
+        String nearValFinal = Integer.toString(nearINT);
+        String totalNotesFinal = Integer.toString(totalNotes);
+
+        //app output
+        critValOut.setText(critValFinal);
+        nearValOut.setText(nearValFinal);
+        noteValOut.setText(totalNotesFinal);
+        gradeOut.setText(grade);
+    }
+
+    //converts EditText input to String
+    String inputToString(EditText input) {
+         return input.getText().toString();
+
+    }
     //grade calculation
     String gradeCalc(double score) {
         String grade = "";
