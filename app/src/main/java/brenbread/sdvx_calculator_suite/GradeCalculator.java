@@ -3,6 +3,7 @@ package brenbread.sdvx_calculator_suite;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.text.InputFilter;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,24 +21,27 @@ import java.math.BigDecimal;
 
 public class GradeCalculator extends Fragment implements View.OnClickListener{
 
-    public EditText totalChain;
+    EditText totalChain;
 
-    public Button calcButton;
-    public Button resetButton;
+    Button calcButton;
+    Button resetButton;
 
-    public TextView outS;
-    public TextView outAAAplus;
-    public TextView outAAA;
-    public TextView outAAplus;
-    public TextView outAA;
-    public TextView outAplus;
-    public TextView outA;
+    TextView outS;
+    TextView outAAAplus;
+    TextView outAAA;
+    TextView outAAplus;
+    TextView outAA;
+    TextView outAplus;
+    TextView outA;
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.grade_calculator, container, false);
         totalChain = (EditText) view.findViewById(R.id.totalChain);
+        //max 100,000 input
+        totalChain.setFilters(new InputFilter[]{ new InputFilterMinMax("0", "100000")});
+
         outS = (TextView) view.findViewById(R.id.outS);
         outAAAplus = (TextView) view.findViewById(R.id.outAAAplus);
         outAAA = (TextView) view.findViewById(R.id.outAAA);

@@ -2,6 +2,7 @@ package brenbread.sdvx_calculator_suite;
 
 import android.app.Fragment;
 import android.os.Bundle;
+import android.text.InputFilter;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,6 +37,12 @@ public class ScoreCalculator extends Fragment implements View.OnClickListener {
         criticalInput = (EditText) view.findViewById(R.id.criticalInput);
         nearInput = (EditText) view.findViewById(R.id.nearInput);
         errorInput = (EditText) view.findViewById(R.id.errorInput);
+
+        //input limit to max 100,000
+        criticalInput.setFilters(new InputFilter[]{ new InputFilterMinMax("0", "100000")});
+        nearInput.setFilters(new InputFilter[]{ new InputFilterMinMax("0", "100000")});
+        errorInput.setFilters(new InputFilter[]{ new InputFilterMinMax("0", "100000")});
+
         scoreOut = (TextView) view.findViewById(R.id.scoreVal);
         gradeOut = (TextView) view.findViewById(R.id.gradeOut);
         critValOut = (TextView) view.findViewById(R.id.critOut);
@@ -109,7 +116,6 @@ public class ScoreCalculator extends Fragment implements View.OnClickListener {
                 break;
         }
     }
-
 
     void scoreCalc(String critIn, String nearIn, String errorIn) {
         String grade;
